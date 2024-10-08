@@ -10,7 +10,6 @@ namespace Restaurant.AutoMapper
         {
             CreateMap<CreateMealsDto, MealModel>().ReverseMap();
             CreateMap<MealModel, MealsViewModelOrDto>().ReverseMap();
-
         }
     }
 }
