@@ -24,5 +24,16 @@ namespace DataCenter.MealsManagement
             return mappingToReturn;
         }
 
+        public MealModel Create(MealModel inputFromDeveloper)
+        {
+            var mappingToInsert = _mapper.Map<MealModel, Meals>(inputFromDeveloper);
+
+            _meals.Add(mappingToInsert);
+
+            var mappingToReturn = _mapper.Map<Meals, MealModel>(mappingToInsert);
+
+            return mappingToReturn;
+        }
+
     }
 }
