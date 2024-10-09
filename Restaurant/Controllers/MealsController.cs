@@ -35,5 +35,18 @@ namespace Restaurant.Controllers
             return Ok(mappingToReturnUser);
             //Retrurn MealsViewModelOrDto
         }
+
+        [HttpPost]
+        public ActionResult Create(CreateMealsDto inputFromEndUser)
+        {
+            var mapping = _mapper.Map<CreateMealsDto, MealModel>(inputFromEndUser);
+
+            var resultFromService = _mealService.CreateMealService(mapping);
+
+            var mappingToReturnUser = _mapper.Map<MealModel, MealsViewModelOrDto>(resultFromService);
+
+            return Ok(mappingToReturnUser);
+        }
+
     }
 }
