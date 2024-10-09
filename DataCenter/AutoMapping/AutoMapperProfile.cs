@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Contracts.AllModels.MealsModels;
-using DataCenter.MealsManagement;
+using DataCenter.MealManagement;
 
 namespace DataCenter.AutoMapper
 {
@@ -8,8 +8,8 @@ namespace DataCenter.AutoMapper
     {
         public AutoMapperProfile()
         {
-            CreateMap<Meals, MealModel>();
-            CreateMap<MealModel, Meals>()
+            CreateMap<Meal, MealModel>();
+            CreateMap<MealModel, Meal>()
                 .ForMember(s => s.Id, c => c.Ignore());
         }
     }

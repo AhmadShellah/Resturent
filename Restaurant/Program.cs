@@ -19,7 +19,7 @@ builder.Services.AddAutoMapper(typeof(DataCenter.AutoMapper.AutoMapperProfile));
 
 var app = builder.Build();
 
-
+//app.UseSqlServer();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

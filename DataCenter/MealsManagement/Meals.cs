@@ -1,8 +1,8 @@
 ﻿using DataCenter.Base;
 
-namespace DataCenter.MealsManagement
+namespace DataCenter.MealManagement
 {
-    public class Meals : BaseEntity
+    public class Meal : BaseEntity
     {
         public string Name { get; set; }
 

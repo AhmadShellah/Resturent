@@ -1,36 +1,36 @@
 ﻿using AutoMapper;
 using Contracts.AllModels.MealsModels;
 
-namespace DataCenter.MealsManagement
+namespace DataCenter.MealManagement
 {
-    public class MealsRepository
+    public class MealRepository
     {
-        private readonly static List<Meals> _meals = new();
+        private readonly static List<Meal> _Meal = new();
         private readonly IMapper _mapper;
 
-        public MealsRepository(IMapper mapper)
+        public MealRepository(IMapper mapper)
         {
             _mapper = mapper;
         }
 
         public MealModel CreateObjectInDataBase(MealModel inputFromDeveloper)
         {
-            var mappingToInsert = _mapper.Map<MealModel, Meals>(inputFromDeveloper);
+            var mappingToInsert = _mapper.Map<MealModel, Meal>(inputFromDeveloper);
 
-            _meals.Add(mappingToInsert);
+            _Meal.Add(mappingToInsert);
 
-            var mappingToReturn = _mapper.Map<Meals, MealModel>(mappingToInsert);
+            var mappingToReturn = _mapper.Map<Meal, MealModel>(mappingToInsert);
 
             return mappingToReturn;
         }
 
         public MealModel Create(MealModel inputFromDeveloper)
         {
-            var mappingToInsert = _mapper.Map<MealModel, Meals>(inputFromDeveloper);
+            var mappingToInsert = _mapper.Map<MealModel, Meal>(inputFromDeveloper);
 
-            _meals.Add(mappingToInsert);
+            _Meal.Add(mappingToInsert);
 
-            var mappingToReturn = _mapper.Map<Meals, MealModel>(mappingToInsert);
+            var mappingToReturn = _mapper.Map<Meal, MealModel>(mappingToInsert);
 
             return mappingToReturn;
         }

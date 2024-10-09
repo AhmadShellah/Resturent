@@ -1,13 +1,13 @@
 ﻿using AutoMapper;
 using Contracts.AllModels.MealsModels;
-using DataCenter.MealsManagement;
+using DataCenter.MealManagement;
 
 namespace Services
 {
     public class MealService
     {
         private readonly IMapper _mapper;
-        private readonly MealsRepository _mealsRepository;
+        private readonly MealRepository _mealsRepository;
 
         public MealService(IMapper mapper)
         {
