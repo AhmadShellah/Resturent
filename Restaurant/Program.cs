@@ -5,6 +5,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
+var configration = new ConfigurationBuilder()
+    .AddJsonFile("appsettings.json")
+    .Build();
+
 //Add DataBase 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
