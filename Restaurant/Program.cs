@@ -1,6 +1,17 @@
+using DataCenter;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+var configration = new ConfigurationBuilder()
+    .AddJsonFile("appsettings.json")
+    .Build();
+
+//Add DataBase 
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -12,7 +23,7 @@ builder.Services.AddAutoMapper(typeof(DataCenter.AutoMapper.AutoMapperProfile));
 
 var app = builder.Build();
 
-
+//app.UseSqlServer();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

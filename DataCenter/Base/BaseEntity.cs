@@ -1,7 +1,10 @@
-﻿namespace DataCenter.Base
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace DataCenter.Base
 {
     public abstract class BaseEntity
     {
+        [Key]
         public Guid Id { get; set; } = Guid.NewGuid();
 
         public bool IsDeleted { get; set; } = false;
