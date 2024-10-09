@@ -25,12 +25,10 @@ namespace DataCenter
              .AddJsonFile("appsettings.json")
              .Build();
 
-            var connectionString = Environment.GetEnvironmentVariable("DefaultConnection");
-
-            var connectionStringFromConfig = configuration.GetConnectionString("DefaultConnection");
+            var connectionString = configuration.GetConnectionString("DefaultConnection");
 
             var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
-            optionsBuilder.UseSqlServer(connectionStringFromConfig);
+            optionsBuilder.UseSqlServer(connectionString);
 
             return new ApplicationDbContext(optionsBuilder.Options);
         }
