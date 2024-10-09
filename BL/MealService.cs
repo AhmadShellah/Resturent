@@ -26,6 +26,17 @@ namespace Services
             return resultFromDataBase;
         }
 
+        public MealModel Create(MealModel inputFromController)
+        {
+            ValidationFromInput(inputFromController);
+
+            inputFromController.Description = "input From Service Or BL";
+
+            var resultFromDataBase = _mealsRepository.CreateObjectInDataBase(inputFromController);
+
+            return resultFromDataBase;
+        }
+
         private static void ValidationFromInput(MealModel inputFromController)
         {
             //Cards If 
