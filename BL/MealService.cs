@@ -1,18 +1,20 @@
 ﻿using AutoMapper;
 using Contracts.AllModels.MealsModels;
+using Contracts.InterFacses;
 using DataCenter.MealManagement;
+using DataCenter.MealsManagement;
 
 namespace Services
 {
-    public class MealService
+    public class MealService : IMealService
     {
         private readonly IMapper _mapper;
-        private readonly MealRepository _mealsRepository;
+        private readonly IMealRepositoryService _mealsRepository;
 
-        public MealService(IMapper mapper)
+        public MealService(IMapper mapper, IMealRepositoryService mealsRepository)
         {
             _mapper = mapper;
-            _mealsRepository = new(_mapper);
+            _mealsRepository = mealsRepository;
         }
 
         public MealModel CreateMealService(MealModel inputFromController)

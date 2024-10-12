@@ -1,5 +1,9 @@
+using Contracts.InterFacses;
 using DataCenter;
+using DataCenter.MealManagement;
+using DataCenter.MealsManagement;
 using Microsoft.EntityFrameworkCore;
+using Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +16,9 @@ var configration = new ConfigurationBuilder()
 //Add DataBase 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddScoped<IMealService, MealService>();
+builder.Services.AddScoped<IMealRepositoryService, MealRepository>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

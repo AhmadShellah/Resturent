@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Contracts.AllModels.MealsModels;
+using Contracts.InterFacses;
 using Microsoft.AspNetCore.Mvc;
 using Restaurant.ViewModelsOrDtos;
 using Services;
@@ -15,12 +16,12 @@ namespace Restaurant.Controllers
     public class MealsController : ControllerBase
     {
         private readonly IMapper _mapper;
-        private readonly MealService _mealService;
+        private readonly IMealService _mealService;
 
-        public MealsController(IMapper mapper)
+        public MealsController(IMapper mapper, IMealService mealService)
         {
             _mapper = mapper;
-            _mealService = new(_mapper);
+            _mealService = mealService;
         }
 
         [HttpPost]
