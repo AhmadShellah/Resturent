@@ -1,4 +1,6 @@
 ﻿using DataCenter.MealManagement;
+using DataCenter.OrderManagement;
+using DataCenter.OrderMealsManagement;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
@@ -14,6 +16,13 @@ namespace DataCenter
         }
 
         public DbSet<Meal> Meals { get; set; }
+
+        public DbSet<Order> Orders { get; set; }
+
+        public DbSet<OrderMeal> OrderMeals { get; set; }
+
+        public DbSet<OrderMealDetails> OrderMealDetails { get; set; }
+
     }
 
     public class ApplicationDbContextFactory : IDesignTimeDbContextFactory<ApplicationDbContext>

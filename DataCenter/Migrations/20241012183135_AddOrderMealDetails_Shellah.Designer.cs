@@ -4,6 +4,7 @@ using DataCenter;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataCenter.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241012183135_AddOrderMealDetails_Shellah")]
+    partial class AddOrderMealDetails_Shellah
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -100,7 +103,7 @@ namespace DataCenter.Migrations
                     b.Property<Guid>("OrderId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("OrderMealDetailsId")
+                    b.Property<Guid?>("OrderMealDetailsId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
@@ -161,9 +164,7 @@ namespace DataCenter.Migrations
 
                     b.HasOne("DataCenter.OrderMealsManagement.OrderMealDetails", "OrderMealDetails")
                         .WithMany()
-                        .HasForeignKey("OrderMealDetailsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("OrderMealDetailsId");
 
                     b.Navigation("Meal");
 
