@@ -4,6 +4,7 @@ using DataCenter;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataCenter.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241012175042_OrderMealAndOrder_Shellah")]
+    partial class OrderMealAndOrder_Shellah
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -100,49 +103,13 @@ namespace DataCenter.Migrations
                     b.Property<Guid>("OrderId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("OrderMealDetailsId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Id");
 
                     b.HasIndex("MealId");
 
                     b.HasIndex("OrderId");
 
-                    b.HasIndex("OrderMealDetailsId");
-
                     b.ToTable("OrderMeals");
-                });
-
-            modelBuilder.Entity("DataCenter.OrderMealsManagement.OrderMealDetails", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreationDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("DeleteTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<Guid>("OrderMealId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("Qty")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("UnitPrice")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("OrderMealId");
-
-                    b.ToTable("OrderMealDetails");
                 });
 
             modelBuilder.Entity("DataCenter.OrderMealsManagement.OrderMeal", b =>
@@ -159,28 +126,9 @@ namespace DataCenter.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("DataCenter.OrderMealsManagement.OrderMealDetails", "OrderMealDetails")
-                        .WithMany()
-                        .HasForeignKey("OrderMealDetailsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Meal");
 
                     b.Navigation("Order");
-
-                    b.Navigation("OrderMealDetails");
-                });
-
-            modelBuilder.Entity("DataCenter.OrderMealsManagement.OrderMealDetails", b =>
-                {
-                    b.HasOne("DataCenter.OrderMealsManagement.OrderMeal", "OrderMeal")
-                        .WithMany()
-                        .HasForeignKey("OrderMealId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("OrderMeal");
                 });
 #pragma warning restore 612, 618
         }
