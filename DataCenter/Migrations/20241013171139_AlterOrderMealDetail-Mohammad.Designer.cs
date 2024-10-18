@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataCenter.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241012183352_OrderMealDetailes_Shellah_NonNullableObject")]
-    partial class OrderMealDetailes_Shellah_NonNullableObject
+    [Migration("20241013171139_AlterOrderMealDetail-Mohammad")]
+    partial class AlterOrderMealDetailMohammad
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -112,7 +112,8 @@ namespace DataCenter.Migrations
 
                     b.HasIndex("OrderId");
 
-                    b.HasIndex("OrderMealDetailsId");
+                    b.HasIndex("OrderMealDetailsId")
+                        .IsUnique();
 
                     b.ToTable("OrderMeals");
                 });
@@ -132,9 +133,6 @@ namespace DataCenter.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<Guid>("OrderMealId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
@@ -142,8 +140,6 @@ namespace DataCenter.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("OrderMealId");
 
                     b.ToTable("OrderMealDetails");
                 });
@@ -157,14 +153,14 @@ namespace DataCenter.Migrations
                         .IsRequired();
 
                     b.HasOne("DataCenter.OrderManagement.Order", "Order")
-                        .WithMany()
+                        .WithMany("Meals")
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("DataCenter.OrderMealsManagement.OrderMealDetails", "OrderMealDetails")
-                        .WithMany()
-                        .HasForeignKey("OrderMealDetailsId")
+                        .WithOne("OrderMeal")
+                        .HasForeignKey("DataCenter.OrderMealsManagement.OrderMeal", "OrderMealDetailsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -175,15 +171,15 @@ namespace DataCenter.Migrations
                     b.Navigation("OrderMealDetails");
                 });
 
+            modelBuilder.Entity("DataCenter.OrderManagement.Order", b =>
+                {
+                    b.Navigation("Meals");
+                });
+
             modelBuilder.Entity("DataCenter.OrderMealsManagement.OrderMealDetails", b =>
                 {
-                    b.HasOne("DataCenter.OrderMealsManagement.OrderMeal", "OrderMeal")
-                        .WithMany()
-                        .HasForeignKey("OrderMealId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                    b.Navigation("OrderMeal")
                         .IsRequired();
-
-                    b.Navigation("OrderMeal");
                 });
 #pragma warning restore 612, 618
         }

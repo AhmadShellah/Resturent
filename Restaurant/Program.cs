@@ -2,6 +2,7 @@ using Contracts.InterFacses;
 using DataCenter;
 using DataCenter.MealManagement;
 using DataCenter.MealsManagement;
+using DataCenter.OrderManagement;
 using Microsoft.EntityFrameworkCore;
 using Services;
 
@@ -19,6 +20,8 @@ options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnectio
 
 builder.Services.AddScoped<IMealService, MealService>();
 builder.Services.AddScoped<IMealRepositoryService, MealRepository>();
+builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<IOrderRepositoryService, OrderRepository>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

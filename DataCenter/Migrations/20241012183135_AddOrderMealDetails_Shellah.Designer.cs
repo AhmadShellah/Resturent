@@ -135,7 +135,7 @@ namespace DataCenter.Migrations
                     b.Property<Guid>("OrderMealId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("Qty")
+                    b.Property<int>("Quantity")
                         .HasColumnType("int");
 
                     b.Property<decimal>("UnitPrice")

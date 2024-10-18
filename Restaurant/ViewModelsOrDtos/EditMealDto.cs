@@ -1,13 +1,14 @@
-﻿namespace Contracts.AllModels.MealsModels
+﻿namespace Restaurant.ViewModelsOrDtos
 {
-    public class MealModel
+    public class EditMealDto
     {
         public Guid Id { get; set; }
 
         public string Name { get; set; }
 
+        public decimal Price { get; set; }
+
         public string Description { get; set; }
 
-        public decimal Price { get; set; }
     }
 }

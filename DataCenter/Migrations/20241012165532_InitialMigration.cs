@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace DataCenter.Migrations
 {
     /// <inheritdoc />
-    public partial class AddNewTable_Meal_AhmadShellah : Migration
+    public partial class InitialMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

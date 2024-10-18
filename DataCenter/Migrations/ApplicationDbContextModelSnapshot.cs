@@ -100,16 +100,11 @@ namespace DataCenter.Migrations
                     b.Property<Guid>("OrderId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("OrderMealDetailsId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Id");
 
                     b.HasIndex("MealId");
 
                     b.HasIndex("OrderId");
-
-                    b.HasIndex("OrderMealDetailsId");
 
                     b.ToTable("OrderMeals");
                 });
@@ -132,7 +127,7 @@ namespace DataCenter.Migrations
                     b.Property<Guid>("OrderMealId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("Qty")
+                    b.Property<int>("Quantity")
                         .HasColumnType("int");
 
                     b.Property<decimal>("UnitPrice")
@@ -140,7 +135,8 @@ namespace DataCenter.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("OrderMealId");
+                    b.HasIndex("OrderMealId")
+                        .IsUnique();
 
                     b.ToTable("OrderMealDetails");
                 });
@@ -154,33 +150,36 @@ namespace DataCenter.Migrations
                         .IsRequired();
 
                     b.HasOne("DataCenter.OrderManagement.Order", "Order")
-                        .WithMany()
+                        .WithMany("Meals")
                         .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("DataCenter.OrderMealsManagement.OrderMealDetails", "OrderMealDetails")
-                        .WithMany()
-                        .HasForeignKey("OrderMealDetailsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Meal");
 
                     b.Navigation("Order");
-
-                    b.Navigation("OrderMealDetails");
                 });
 
             modelBuilder.Entity("DataCenter.OrderMealsManagement.OrderMealDetails", b =>
                 {
                     b.HasOne("DataCenter.OrderMealsManagement.OrderMeal", "OrderMeal")
-                        .WithMany()
-                        .HasForeignKey("OrderMealId")
+                        .WithOne("OrderMealDetails")
+                        .HasForeignKey("DataCenter.OrderMealsManagement.OrderMealDetails", "OrderMealId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("OrderMeal");
+                });
+
+            modelBuilder.Entity("DataCenter.OrderManagement.Order", b =>
+                {
+                    b.Navigation("Meals");
+                });
+
+            modelBuilder.Entity("DataCenter.OrderMealsManagement.OrderMeal", b =>
+                {
+                    b.Navigation("OrderMealDetails")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

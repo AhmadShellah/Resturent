@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataCenter.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241009184412_AddNewTable_Meal_AhmadShellah")]
-    partial class AddNewTable_Meal_AhmadShellah
+    [Migration("20241012165532_InitialMigration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

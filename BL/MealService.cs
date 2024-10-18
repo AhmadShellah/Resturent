@@ -3,6 +3,7 @@ using Contracts.AllModels.MealsModels;
 using Contracts.InterFacses;
 using DataCenter.MealManagement;
 using DataCenter.MealsManagement;
+using System.Collections.Generic;
 
 namespace Services
 {
@@ -17,6 +18,7 @@ namespace Services
             _mealsRepository = mealsRepository;
         }
 
+        // Create a new meal
         public MealModel CreateMealService(MealModel inputFromController)
         {
             ValidationFromInput(inputFromController);
@@ -28,20 +30,43 @@ namespace Services
             return resultFromDataBase;
         }
 
-        public MealModel Create(MealModel inputFromController)
+        // Get meals (all or by ID)
+        public IEnumerable<MealModel> GetMealService(Guid? id = null)
         {
-            ValidationFromInput(inputFromController);
+            return _mealsRepository.GetMeals(id);
+        }
 
-            inputFromController.Description = "input From Service Or BL";
+        // Edit an existing meal
+        public MealModel EditMealService(MealModel updatedMealModel)
+        {
+            ValidationFromInput(updatedMealModel); // Reuse validation logic before editing the meal
 
-            var resultFromDataBase = _mealsRepository.CreateObjectInDataBase(inputFromController);
+            var resultFromDataBase = _mealsRepository.EditMeal(updatedMealModel);
+
+            if (resultFromDataBase == null)
+            {
+                throw new Exception("Meal not found");
+            }
 
             return resultFromDataBase;
         }
 
+        // Delete a meal by ID
+        public bool DeleteMealService(Guid id)
+        {
+            var result = _mealsRepository.DeleteMeal(id);
+
+            if (!result)
+            {
+                throw new Exception("Meal not found or could not be deleted");
+            }
+
+            return result;
+        }
+
+        // Input validation method
         private static void ValidationFromInput(MealModel inputFromController)
         {
-            //Cards If 
             if (inputFromController == null)
             {
                 throw new Exception("The Object Is null");
@@ -49,12 +74,12 @@ namespace Services
 
             if (string.IsNullOrWhiteSpace(inputFromController.Name))
             {
-                throw new Exception("The Name Is null");
+                throw new Exception("The Name is null or empty");
             }
 
             if (inputFromController.Price <= 0)
             {
-                throw new Exception("The Price Less Than Zero");
+                throw new Exception("The Price must be greater than zero");
             }
         }
     }

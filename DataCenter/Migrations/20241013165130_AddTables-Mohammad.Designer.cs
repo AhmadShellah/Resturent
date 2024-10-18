@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataCenter.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241012183352_OrderMealDetailes_Shellah_NonNullableObject")]
-    partial class OrderMealDetailes_Shellah_NonNullableObject
+    [Migration("20241013165130_AddTables-Mohammad")]
+    partial class AddTablesMohammad
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -157,7 +157,7 @@ namespace DataCenter.Migrations
                         .IsRequired();
 
                     b.HasOne("DataCenter.OrderManagement.Order", "Order")
-                        .WithMany()
+                        .WithMany("Meals")
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -184,6 +184,11 @@ namespace DataCenter.Migrations
                         .IsRequired();
 
                     b.Navigation("OrderMeal");
+                });
+
+            modelBuilder.Entity("DataCenter.OrderManagement.Order", b =>
+                {
+                    b.Navigation("Meals");
                 });
 #pragma warning restore 612, 618
         }
