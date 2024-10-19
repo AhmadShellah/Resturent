@@ -2,6 +2,7 @@ using Contracts.InterFacses;
 using DataCenter;
 using DataCenter.MealManagement;
 using DataCenter.MealsManagement;
+using DataCenter.OrderManagement;
 using Microsoft.EntityFrameworkCore;
 using Services;
 
@@ -17,7 +18,9 @@ var configration = new ConfigurationBuilder()
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.AddScoped<IOrderRepo, OrderRepo>();
 builder.Services.AddScoped<IMealService, MealService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IMealRepositoryService, MealRepository>();
 
 builder.Services.AddControllers();
@@ -26,7 +29,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-builder.Services.AddAutoMapper(typeof(DataCenter.AutoMapper.AutoMapperProfile));
+builder.Services.AddAutoMapper(typeof(DataCenter.AutoMapper.MealProfile));
 
 var app = builder.Build();
 
@@ -46,3 +49,5 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+

@@ -4,13 +4,16 @@ using DataCenter.MealManagement;
 
 namespace DataCenter.AutoMapper
 {
-    public class AutoMapperProfile : Profile
+    public class MealProfile : Profile
     {
-        public AutoMapperProfile()
+        public MealProfile()
         {
             CreateMap<Meal, MealModel>();
+
             CreateMap<MealModel, Meal>()
-                .ForMember(s => s.Id, c => c.Ignore());
+                .ForMember(s => s.Id, c => c.Ignore())
+                .ForMember(dest => dest.IsDeleted, 
+                src => src.MapFrom(src=> src.Deleted));
         }
     }
 }
