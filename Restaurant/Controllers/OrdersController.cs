@@ -1,9 +1,8 @@
 ﻿using AutoMapper;
-using Contracts.AllModels.MealsModels;
+using Contracts.AllModels;
 using Contracts.InterFacses;
 using Microsoft.AspNetCore.Mvc;
 using Restaurant.ViewModelsOrDtos;
-using Services;
 
 namespace Restaurant.Controllers
 {
@@ -16,22 +15,27 @@ namespace Restaurant.Controllers
     public class OrdersController : ControllerBase
     {
         private readonly IMapper _mapper;
+        private readonly IOrderService _orderService;
 
-        public OrdersController(IMapper mapper)
+        public OrdersController(IMapper mapper, IOrderService orderService)
         {
             _mapper = mapper;
+            _orderService = orderService;
         }
-
-        //private readonly IMealService _mealService;
-
 
         [HttpPost]
-        public ActionResult CreateFromEndUser(CreateMealsDto inputFromEndUser)
+        public async Task<ActionResult> CreateFromEndUser(CreateOrderDto inputFromEndUser)
         {
-           
+            var mapping = _mapper.Map<CreateOrderDto, OrderModel>(inputFromEndUser);
+
+            var result = await _orderService.CreateFromEndUser(mapping);
+
+            var afterInsertMapping = _mapper.Map<OrderModel,OrderDto>(result);
+
+            return Ok(afterInsertMapping);
         }
 
-      
+
 
     }
 }
