@@ -1,40 +1,37 @@
 ﻿using BusinessObjects.Models;
+using BusinessObjects.Interfaces;
 using DataAccess.Repositories;
 
 namespace BusinessLogic
 {
-    public class MealService
+    public class MealService(IMealRepository repository) : IMealService
     {
-        private readonly MealRepository repository;
-
-        public MealService()
-        {
-            repository = new MealRepository();
-        }
+        private readonly IMealRepository _repository = repository ?? 
+            throw new ArgumentNullException(nameof(repository));
 
         public async Task<MealModel> CreateAsync(MealModel model)// model => (Repo) => model => Controller
         {
-            return await repository.CreateAsync(model);
+            return await _repository.CreateAsync(model);
         }
 
-        public async Task<bool> EditAsync(MealModel model)
+        public async Task<MealModel> EditAsync(MealModel model)
         {
-            return await repository.EditAsync(model);
+            return await _repository.EditAsync(model);
         }
 
         public async Task<IEnumerable<MealModel>> GetAllAsync()
         {
-            return await repository.GetAllAsync();      
+            return await _repository.GetAllAsync();
         }
 
-        public async Task<MealModel?> GetByIdAsync(Guid id)
+        public async Task<MealModel> GetByIdAsync(Guid id)
         {
-            return await repository.GetByIdAsync(id);
+            return await _repository.GetByIdAsync(id);
         }
 
-        public async Task<bool> RemoveAsync(Guid id)
+        public async Task RemoveAsync(Guid id)
         {
-            return await repository.RemoveAsync(id);
+            await _repository.RemoveAsync(id);
         }
     }
 }

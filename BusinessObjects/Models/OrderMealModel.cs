@@ -2,9 +2,13 @@
 {
     public class OrderMealModel
     {
+        public Guid Id { get; set; }
+        public Guid OrderId { get; set; }
         public Guid MealId { get; set; }
-        public int Quantity { get; set; }
-        public decimal UnitPrice { get; set; }
-        public decimal TotalPrice { get; set; }
+        public OrderMealDetailsModel Details { get; set; }
+        public decimal TotalPrice 
+        { 
+            get => Details.Quantity * Details.UnitPrice;  
+        }
     }
 }

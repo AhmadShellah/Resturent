@@ -1,36 +1,37 @@
-﻿using BusinessLogic;
+﻿using AutoMapper;
 using BusinessObjects.Dtos.Meal;
+using BusinessObjects.Interfaces;
+using BusinessObjects.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Presentation.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    public class MealController : ControllerBase
+    public class MealController(IMealService service, IMapper mapper) : ControllerBase
     {
-        private readonly MealService service;
+        private readonly IMealService _service = service ?? 
+            throw new ArgumentNullException(nameof(service));
 
-        public MealController()
-        {
-            service = new MealService();
-        }
+        private readonly IMapper _mapper = mapper ?? 
+            throw new ArgumentNullException(nameof(mapper));
 
         [HttpPost]
         public async Task<ActionResult> Create([FromBody] CreateMealDto meal) // dto => model =>(BL)=> model => dto;
         {
-            var model = Mapper.GetModel(meal);
+            var model = _mapper.Map<MealModel>(meal);
 
-            var returnedModel = await service.CreateAsync(model);
+            var returnedModel = await _service.CreateAsync(model);
 
-            return Ok(Mapper.GetDto(returnedModel));
+            return Ok(_mapper.Map<MealDto>(returnedModel));
         }
 
         [HttpGet]
         public async Task<ActionResult> GetAll()
         {
-            var returnedList = await service.GetAllAsync();
+            var returnedList = await _service.GetAllAsync();
 
-            var dtoList = returnedList.Select(m => Mapper.GetDto(m)).ToList();
+            var dtoList = _mapper.Map<List<MealDto>>(returnedList);
 
             return Ok(dtoList);
         }
@@ -38,45 +39,47 @@ namespace Presentation.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult> GetById([FromRoute] Guid id)
         {
-            var mealModel = await service.GetByIdAsync(id);
+            try
+            {
+                var mealModel = await _service.GetByIdAsync(id);
 
-            if (mealModel is null)
-            {
-                return NotFound();
+                return Ok(_mapper.Map<MealDto>(mealModel));
             }
-            else
+            catch (KeyNotFoundException ex)
             {
-                return Ok(Mapper.GetDto(mealModel));
+                return NotFound(ex.Message);
             }
         }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult> Remove([FromRoute] Guid id)
         {
-            var ok = await service.RemoveAsync(id);
+            try
+            {
+                await _service.RemoveAsync(id);
 
-            if (ok)
-            {
-                return Ok();
+                return NoContent();
             }
-            else
+            catch (KeyNotFoundException ex)
             {
-                return NotFound();
+                return NotFound(ex.Message);
             }
         }
 
         [HttpPut]
         public async Task<ActionResult> Edit([FromBody] EditMealDto editedMeal)
         {
-            var ok = await service.EditAsync(Mapper.GetModel(editedMeal));
+            try
+            {
+                var model = _mapper.Map<MealModel>(editedMeal);
 
-            if (ok)
-            {
-                return Ok();
+                var returnedModel = await _service.EditAsync(model);
+
+                return Ok(_mapper.Map<MealDto>(returnedModel));
             }
-            else
+            catch (KeyNotFoundException ex)
             {
-                return NotFound();
+                return NotFound(ex.Message);
             }
         }
     }

@@ -6,6 +6,8 @@
 
         public bool IsDeleted { get; protected set; } = false;
 
+        public DateTime CreationDate { get; set; } = DateTime.Now;
+
         public DateTime? DeleteTime { get; protected set; }
 
         public void SetIsDeleted()

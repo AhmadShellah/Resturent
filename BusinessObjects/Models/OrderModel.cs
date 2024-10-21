@@ -5,6 +5,9 @@
         public Guid Id { get; set; }
         public string OrderNumber { get; set; }
         public List<OrderMealModel> OrderMeals { get; set; }
-        public decimal TotalPrice { get; set; }
+        public decimal TotalPrice 
+        { 
+            get => OrderMeals.Sum(om => om.TotalPrice);
+        }
     }
 }

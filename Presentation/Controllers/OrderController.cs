@@ -1,36 +1,44 @@
-﻿using BusinessLogic;
+﻿using AutoMapper;
 using BusinessObjects.Dtos.Order;
+using BusinessObjects.Interfaces;
+using BusinessObjects.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Presentation.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    public class OrderController : ControllerBase
+    public class OrderController(IOrderService service, IMapper mapper) : ControllerBase
     {
-        private readonly OrderService service;
+        private readonly IOrderService _service = service ??
+            throw new ArgumentNullException(nameof(service));
 
-        public OrderController()
-        {
-            service = new OrderService();
-        }
+        private readonly IMapper _mapper = mapper ??
+            throw new ArgumentNullException(nameof(mapper));
 
         [HttpPost]
         public async Task<ActionResult> Create([FromBody] CreateOrderDto order)
         {
-            var model = Mapper.GetModel(order);
+            try
+            {
+                var model = _mapper.Map<OrderModel>(order);
 
-            var returnedModel = await service.CreateAsync(model);
+                var returnedModel = await _service.CreateAsync(model);
 
-            return Ok(Mapper.GetDto(returnedModel));
+                return Ok(_mapper.Map<OrderDto>(returnedModel));
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
         }
 
         [HttpGet]
         public async Task<ActionResult> GetAll()
         {
-            var returedList = await service.GetAllAsync();
+            var returedList = await _service.GetAllAsync();
 
-            var dtoList = returedList.Select(o => Mapper.GetDto(o)).ToList();
+            var dtoList = _mapper.Map<IEnumerable<OrderDto>>(returedList);
 
             return Ok(dtoList);
         }
@@ -38,45 +46,51 @@ namespace Presentation.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult> GetById([FromRoute] Guid id)
         {
-            var orderModel = await service.GetByIdAsync(id);
+            try
+            {
+                var orderModel = await _service.GetByIdAsync(id);
 
-            if(orderModel is null)
-            {
-                return NotFound();
+                return Ok(_mapper.Map<OrderDto>(orderModel));
             }
-            else
+            catch (KeyNotFoundException ex)
             {
-                return Ok(Mapper.GetDto(orderModel));
-            }
-        }
-
-        [HttpDelete("{id}")]
-        public async Task<ActionResult> Remove([FromRoute] Guid id)
-        {
-            var ok = await service.RemoveAsync(id);
-
-            if (ok)
-            {
-                return Ok();
-            }
-            else
-            {
-                return NotFound();
+                return NotFound(ex.Message);
             }
         }
 
         [HttpPut]
         public async Task<ActionResult> Edit([FromBody] EditOrderDto editOrder)
         {
-            var ok = await service.EditAsync(Mapper.GetModel(editOrder));
+            try
+            {
+                var model = _mapper.Map<OrderModel>(editOrder);
 
-            if (ok)
-            {
-                return Ok();
+                await _service.EditAsync(model);
+
+                return NoContent();
             }
-            else
+            catch (KeyNotFoundException ex)
             {
-                return NotFound();
+                return NotFound(ex.Message);
+            }
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> Remove([FromRoute] Guid id)
+        {
+            try
+            {
+                await _service.RemoveAsync(id);
+
+                return NoContent();
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (ArgumentException ex)
+            {
+                return StatusCode(500, ex.Message);
             }
         }
     }

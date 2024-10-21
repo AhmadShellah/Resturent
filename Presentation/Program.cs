@@ -1,4 +1,9 @@
 using BusinessLogic;
+using BusinessObjects.Interfaces;
+using DataAccess;
+using DataAccess.Repositories;
+using DataAccess.Repositories.Implementation;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,7 +14,22 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddSingleton<OrderService>();
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServer"))
+);
+
+builder.Services.AddScoped<IMealRepository, MealRepository>();
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<IOrderMealRepository, OrderMealRepository>();
+builder.Services.AddScoped<IOrderMealDetailsRepository, OrderMealDetailsRepository>();
+
+builder.Services.AddScoped<IMealService, MealService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
+
+builder.Services.AddAutoMapper(
+    typeof(DataAccess.Mapping.MealProfile),
+    typeof(Presentation.Mapping.MealProfile)
+);
 
 var app = builder.Build();
 

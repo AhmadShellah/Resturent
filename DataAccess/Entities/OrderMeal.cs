@@ -2,12 +2,12 @@
 {
     public class OrderMeal: BaseEntity
     {
-        public Guid OrderID { get; set; }
-        public Guid MealID { get; set; }
-        public int Quantity { get; set; }
-        public decimal UnitPrice { get; set; }
+        public Guid OrderId { get; set; }
+        public Order Order { get; set; } = null!;
 
-        public Order Order { get; set; }
-        public Meal Meal { get; set; }
+        public Guid MealId { get; set; }
+        public Meal Meal { get; set; } = null!;
+
+        public OrderMealDetails Details { get; set; } = null!;
     }
 }

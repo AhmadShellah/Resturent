@@ -1,5 +1,4 @@
-﻿using BusinessObjects.Dtos.Meal;
-using BusinessObjects.Dtos.OrderMeal;
+﻿using BusinessObjects.Dtos.OrderMeal;
 using System.ComponentModel.DataAnnotations;
 
 namespace BusinessObjects.Dtos.Order
