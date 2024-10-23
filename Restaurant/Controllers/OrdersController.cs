@@ -23,6 +23,17 @@ namespace Restaurant.Controllers
             _orderService = orderService;
         }
 
+        [HttpGet]
+        public async Task<ActionResult> GetByIdAsync(Guid id)
+        {
+            var result = await _orderService.GetByIdAsync(id);
+
+            var afterInsertMapping = _mapper.Map<OrderModel, OrderDto>(result);
+
+            return Ok(afterInsertMapping);
+        }
+
+
         [HttpPost]
         public async Task<ActionResult> CreateFromEndUser(CreateOrderDto inputFromEndUser)
         {

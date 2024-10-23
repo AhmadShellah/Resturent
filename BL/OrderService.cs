@@ -13,6 +13,11 @@ namespace Services
             _orderRepo = orderRepo;
         }
 
+        public async Task<OrderModel> GetByIdAsync(Guid id)
+        {
+            return await _orderRepo.GetByIdAsync(id);
+        }
+
         public async Task<OrderModel> CreateFromEndUser(OrderModel inputFromEndUser)
         {
             inputFromEndUser.Number = new Random().Next(0, 100);
