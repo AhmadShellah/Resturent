@@ -4,6 +4,10 @@ namespace DataCenter.OrderManagement
 {
     public interface IOrderRepo
     {
+        public Task<OrderModel> GetByIdAsync(Guid id);
+
         public Task<OrderModel> CreateFromUser(OrderModel inputFromUser);
+
+        public Task<List<OrderModel>> GetByDueDateAsync(DateTime dueDate);
     }
 }

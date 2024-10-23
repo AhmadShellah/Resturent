@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Contracts.AllModels.MealsModels;
+using DataCenter.GenricRepo;
 using DataCenter.MealsManagement;
 
 namespace DataCenter.MealManagement
@@ -9,11 +10,22 @@ namespace DataCenter.MealManagement
         private readonly static List<Meal> _Meal = new();
         private readonly IMapper _mapper;
         private readonly ApplicationDbContext _context;
+        private readonly IBasicRepo<Meal> _basicRepo;
 
-        public MealRepository(IMapper mapper, ApplicationDbContext context)
+        public MealRepository(IMapper mapper, ApplicationDbContext context, IBasicRepo<Meal> basicRepo)
         {
             _mapper = mapper;
             _context = context;
+            _basicRepo = basicRepo;
+        }
+
+        public async Task<List<MealModel>> GetMealsList()
+        {
+            var result = await _basicRepo.GetListAsync(s=> s.Description == "Ahmad");
+
+            var mapping = _mapper.Map<List<MealModel>>(result);
+
+            return mapping;
         }
 
         public MealModel CreateObjectInDataBase(MealModel inputFromDeveloper)

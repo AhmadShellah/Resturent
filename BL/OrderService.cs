@@ -13,6 +13,11 @@ namespace Services
             _orderRepo = orderRepo;
         }
 
+        public async Task<OrderModel> GetByIdAsync(Guid id)
+        {
+            return await _orderRepo.GetByIdAsync(id);
+        }
+
         public async Task<OrderModel> CreateFromEndUser(OrderModel inputFromEndUser)
         {
             inputFromEndUser.Number = new Random().Next(0, 100);
@@ -21,6 +26,11 @@ namespace Services
             return await _orderRepo.CreateFromUser(inputFromEndUser);
         }
 
-       
+        public async Task<List<OrderModel>> GetByDueDateAsync(DateTime dueDate)
+        {
+            var result = await _orderRepo.GetByDueDateAsync(dueDate);
+
+            return result;
+        }
     }
 }

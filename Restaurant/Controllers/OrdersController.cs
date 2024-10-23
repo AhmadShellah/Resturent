@@ -23,6 +23,27 @@ namespace Restaurant.Controllers
             _orderService = orderService;
         }
 
+        [HttpGet]
+        public async Task<ActionResult> GetByIdAsync(Guid id)
+        {
+            var result = await _orderService.GetByIdAsync(id);
+
+            var afterInsertMapping = _mapper.Map<OrderModel, OrderDto>(result);
+
+            return Ok(afterInsertMapping);
+        }
+
+        [HttpGet]
+        public async Task<ActionResult> GetByDueDateAsync(DateTime dueDate)
+        {
+            var result = await _orderService.GetByDueDateAsync(dueDate);
+
+            var mapping = _mapper.Map<List<OrderModel>, List<OrderDto>>(result);
+
+            return Ok(mapping);
+        }
+
+
         [HttpPost]
         public async Task<ActionResult> CreateFromEndUser(CreateOrderDto inputFromEndUser)
         {
@@ -30,7 +51,7 @@ namespace Restaurant.Controllers
 
             var result = await _orderService.CreateFromEndUser(mapping);
 
-            var afterInsertMapping = _mapper.Map<OrderModel,OrderDto>(result);
+            var afterInsertMapping = _mapper.Map<OrderModel, OrderDto>(result);
 
             return Ok(afterInsertMapping);
         }
