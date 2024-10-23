@@ -7,5 +7,7 @@ namespace DataCenter.OrderManagement
         public Task<OrderModel> GetByIdAsync(Guid id);
 
         public Task<OrderModel> CreateFromUser(OrderModel inputFromUser);
+
+        public Task<List<OrderModel>> GetByDueDateAsync(DateTime dueDate);
     }
 }

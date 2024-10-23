@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Contracts.AllModels;
 using DataCenter.GenricRepo;
+using Microsoft.EntityFrameworkCore;
 
 namespace DataCenter.OrderManagement
 {
@@ -17,11 +18,32 @@ namespace DataCenter.OrderManagement
             _basicRepo = basicRepo;
         }
 
+        //public async Task<OrderModel> GetByIdAsync(Guid id)
+        //{
+        //    var result = await _basicRepo.GetByIdAsync(id);
+
+        //    var mapping = _mapper.Map<OrderModel>(result);
+
+        //    return mapping;
+        //}
+
         public async Task<OrderModel> GetByIdAsync(Guid id)
         {
-            var result = await _basicRepo.GetByIdAsync(id);
+            var result = await _basicRepo.GetIQueryableAsync();
 
-            var mapping = _mapper.Map<OrderModel>(result);
+            var finalResult = await result.FirstOrDefaultAsync(s=> s.Id == id);
+
+            var mapping = _mapper.Map<OrderModel>(finalResult);
+
+            return mapping;
+        }
+
+
+        public async Task<List<OrderModel>> GetByDueDateAsync(DateTime dueDate)
+        {
+            var result = await _basicRepo.GetListAsync(s => s.DueDate.Date == dueDate.Date);
+
+            var mapping = _mapper.Map<List<OrderModel>>(result);
 
             return mapping;
         }

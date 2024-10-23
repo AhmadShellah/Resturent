@@ -26,6 +26,11 @@ namespace Services
             return await _orderRepo.CreateFromUser(inputFromEndUser);
         }
 
-       
+        public async Task<List<OrderModel>> GetByDueDateAsync(DateTime dueDate)
+        {
+            var result = await _orderRepo.GetByDueDateAsync(dueDate);
+
+            return result;
+        }
     }
 }

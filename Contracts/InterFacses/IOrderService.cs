@@ -6,7 +6,10 @@ namespace Contracts.InterFacses
     {
         Task<OrderModel> GetByIdAsync(Guid id);
 
+        Task<List<OrderModel>> GetByDueDateAsync(DateTime dueDate);
+
         public Task<OrderModel> CreateFromEndUser(OrderModel inputFromEndUser);
+
 
     }
 }
