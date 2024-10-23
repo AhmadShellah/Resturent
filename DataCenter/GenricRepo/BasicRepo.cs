@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace DataCenter.GenricRepo
 {
@@ -21,6 +22,15 @@ namespace DataCenter.GenricRepo
         public async Task<List<TEntity>> GetListAsync()
         {
             var result = await _context.Set<TEntity>().ToListAsync();
+
+            return result;
+        }
+
+        public async Task<List<TEntity>> GetListAsync(Expression<Func<TEntity, bool>> filter)
+        {
+            var result = await _context.Set<TEntity>()
+                .Where(filter)
+                .ToListAsync();
 
             return result;
         }
