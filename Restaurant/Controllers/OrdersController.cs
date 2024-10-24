@@ -34,9 +34,9 @@ namespace Restaurant.Controllers
 
         // Get all orders or a specific order by ID
         [HttpGet]
-        public ActionResult<IEnumerable<OrderDto>> GetOrders(Guid? id = null)
+        public async Task<ActionResult<IEnumerable<OrderDto>>> GetOrders(Guid? id = null)
         {
-            var resultFromService = _orderService.GetOrders(id);
+            var resultFromService = await _orderService.GetOrders(id);
             var mappingToReturn = _mapper.Map<IEnumerable<OrderDto>>(resultFromService);
             return Ok(mappingToReturn);
         }

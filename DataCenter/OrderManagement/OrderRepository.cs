@@ -1,19 +1,22 @@
 ﻿using AutoMapper;
 using Contracts.AllModels.OredrsModels;
 using Contracts.InterFacses;
+using DataCenter.GenricRepo;
 using Microsoft.EntityFrameworkCore;
 
 namespace DataCenter.OrderManagement
 {
     public class OrderRepository : IOrderRepositoryService
     {
-        private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
+        private readonly IBasicRepo<Order> _basicRepo;
+        private readonly ApplicationDbContext _context;
 
-        public OrderRepository(ApplicationDbContext context, IMapper mapper)
+        public OrderRepository(ApplicationDbContext context, IMapper mapper, IBasicRepo<Order> basicRepo)
         {
             _context = context;
             _mapper = mapper;
+            _basicRepo = basicRepo;
         }
 
         public OrderModel CreateOrder(OrderModel orderModel)
@@ -25,20 +28,25 @@ namespace DataCenter.OrderManagement
             return _mapper.Map<Order, OrderModel>(order);
         }
 
-        public IEnumerable<OrderModel> GetOrders(Guid? id = null)
+        public async Task<IEnumerable<OrderModel>> GetOrders(Guid? id = null)
         {
             if (id.HasValue)
             {
-                var order = _context.Orders.Include(o => o.Meals).ThenInclude(om => om.OrderMealDetails)
-                    .FirstOrDefault(o => o.Id == id.Value);
+                var orders = await _basicRepo.GetIQueryableAsync();
+                orders = orders.Include(o => o.Meals).ThenInclude(om => om.OrderMealDetails);
+
+                var order = orders.FirstOrDefault(o => o.Id == id.Value);
+
                 return order != null
                     ? new List<OrderModel> { _mapper.Map<Order, OrderModel>(order) }
                     : new List<OrderModel>();
             }
             else
             {
-                var orders = _context.Orders.Include(o => o.Meals).ThenInclude(om => om.OrderMealDetails).ToList();
-                return _mapper.Map<IEnumerable<OrderModel>>(orders);
+                var orders = await _basicRepo.GetIQueryableAsync();
+                orders = orders.Include(o => o.Meals).ThenInclude(om => om.OrderMealDetails);
+
+                return _mapper.Map<IEnumerable<OrderModel>>(orders.ToList());
             }
         }
 

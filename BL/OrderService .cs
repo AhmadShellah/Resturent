@@ -41,9 +41,9 @@ namespace Services
 
             return createdOrderModel;
         }
-        public IEnumerable<OrderModel> GetOrders(Guid? id = null)
+        public async Task<IEnumerable<OrderModel>> GetOrders(Guid? id = null)
         {
-            return _orderRepository.GetOrders(id);
+            return  await _orderRepository.GetOrders(id);
         }
 
         //public OrderModel EditOrder(OrderModel updatedOrderModel)
