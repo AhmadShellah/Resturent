@@ -1,5 +1,6 @@
 using Contracts.InterFacses;
 using DataCenter;
+using DataCenter.GenricRepo;
 using DataCenter.MealManagement;
 using DataCenter.MealsManagement;
 using DataCenter.OrderManagement;
@@ -22,6 +23,8 @@ builder.Services.AddScoped<IMealService, MealService>();
 builder.Services.AddScoped<IMealRepositoryService, MealRepository>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IOrderRepositoryService, OrderRepository>();
+
+builder.Services.AddScoped(typeof(IBasicRepo<>), typeof(BasicRepo<>));
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
