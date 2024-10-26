@@ -1,8 +1,9 @@
 using BusinessLogic;
 using BusinessObjects.Interfaces;
 using DataAccess;
-using DataAccess.Repositories;
+using DataAccess.Repositories.Generic;
 using DataAccess.Repositories.Implementation;
+using DataAccess.Repositories.Specific;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,6 +23,11 @@ builder.Services.AddScoped<IMealRepository, MealRepository>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IOrderMealRepository, OrderMealRepository>();
 builder.Services.AddScoped<IOrderMealDetailsRepository, OrderMealDetailsRepository>();
+
+builder.Services.AddScoped(typeof(IGetRepository<>), typeof(GetRepository<>));
+builder.Services.AddScoped(typeof(ICreateRepository<>), typeof(CreateRepository<>));
+builder.Services.AddScoped(typeof(IRemoveRepository<>), typeof(RemoveRepository<>));
+
 
 builder.Services.AddScoped<IMealService, MealService>();
 builder.Services.AddScoped<IOrderService, OrderService>();

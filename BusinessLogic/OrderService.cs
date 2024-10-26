@@ -1,6 +1,7 @@
 ﻿using BusinessObjects.Models;
-using DataAccess.Repositories;
 using BusinessObjects.Interfaces;
+using DataAccess.Repositories.Specific;
+using DataAccess.Entities;
 
 namespace BusinessLogic
 {
@@ -9,17 +10,13 @@ namespace BusinessLogic
         IOrderMealRepository orderMealRepository,
         IOrderMealDetailsRepository orderMealDetailsRepository) : IOrderService
     {
-        private readonly IOrderRepository _repository = repository ??
-            throw new ArgumentNullException(nameof(repository));
+        private readonly IOrderRepository _repository = repository;
 
-        private readonly IMealRepository _mealRepository = mealRepository ??
-            throw new ArgumentNullException(nameof(mealRepository));
+        private readonly IMealRepository _mealRepository = mealRepository;
 
-        private readonly IOrderMealRepository _orderMealRepository = orderMealRepository ??
-            throw new ArgumentNullException(nameof(orderMealRepository));
+        private readonly IOrderMealRepository _orderMealRepository = orderMealRepository;
 
-        private readonly IOrderMealDetailsRepository _orderMealDetailsRepository = orderMealDetailsRepository ??
-            throw new ArgumentNullException(nameof(orderMealDetailsRepository));
+        private readonly IOrderMealDetailsRepository _orderMealDetailsRepository = orderMealDetailsRepository;
 
         public async Task<OrderModel> CreateAsync(OrderModel model)
         {
@@ -78,7 +75,7 @@ namespace BusinessLogic
 
         public async Task RemoveAsync(Guid id)
         {
-            await _orderMealDetailsRepository.RemoveRangeAsync(id);
+            await _orderMealDetailsRepository.RemoveRangeAsync(d => d.OrderMeal.OrderId == id);
 
             await _orderMealRepository.RemoveAsync(om => om.OrderId == id);
 

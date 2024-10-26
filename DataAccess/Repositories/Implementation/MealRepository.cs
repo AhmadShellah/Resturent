@@ -1,43 +1,46 @@
 ﻿using AutoMapper;
 using BusinessObjects.Models;
 using DataAccess.Entities;
+using DataAccess.Repositories.Generic;
+using DataAccess.Repositories.Specific;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
 namespace DataAccess.Repositories.Implementation
 {
-    public class MealRepository(ApplicationDbContext context, IMapper mapper) : IMealRepository
+    public class MealRepository(ApplicationDbContext context, 
+        IMapper mapper, 
+        IGetRepository<Meal> getRepository,
+        ICreateRepository<Meal> createRepository,
+        IRemoveRepository<Meal> removeRepository) : IMealRepository
     {
-        private readonly ApplicationDbContext _context = context ?? 
-            throw new ArgumentNullException(nameof(context));
+        private readonly ApplicationDbContext _context = context;
 
-        private readonly IMapper _mapper = mapper ??
-            throw new ArgumentNullException(nameof(mapper));
+        private readonly IMapper _mapper = mapper;
 
-        public async Task<MealModel> CreateAsync(MealModel model)  // model => entity =>(DB) => model => BL
+        private readonly IGetRepository<Meal> _getRepository = getRepository;
+
+        private readonly ICreateRepository<Meal> _createRepository = createRepository;
+
+        private readonly IRemoveRepository<Meal> _removeRepository = removeRepository;
+
+        public async Task<MealModel> CreateAsync(MealModel model, bool? saving = false)  // model => entity =>(DB) => model => BL
         {
             var entity = _mapper.Map<Meal>(model);
 
-            await _context.Meals.AddAsync(entity);
-            await _context.SaveChangesAsync();
+            await _createRepository.CreateAsync(entity, saving);
 
             return _mapper.Map<MealModel>(entity);
         }
 
-        public async Task RemoveAsync(Guid id)
+        public async Task RemoveAsync(Guid id, bool? saving = false)
         {
-            var meal = await _context.Meals.FirstOrDefaultAsync(m => m.Id == id && !m.IsDeleted) ??
-                throw new KeyNotFoundException($"Meal with id: {id} not found !!");
-
-            meal.SetIsDeleted();
-
-            await _context.SaveChangesAsync();
+            await _removeRepository.RemoveAsync(id, saving);
         }
 
         public async Task<MealModel> GetByIdAsync(Guid id)
         {
-            var mealToReturn = await _context.Meals.FirstOrDefaultAsync(m => m.Id == id && !m.IsDeleted) ??
-                throw new KeyNotFoundException($"Meal with id: {id} not found !!");
+            var mealToReturn = await _getRepository.GetByIdAsync(id);
 
             return _mapper.Map<MealModel>(mealToReturn);
         }
@@ -55,12 +58,22 @@ namespace DataAccess.Repositories.Implementation
             return _mapper.Map<MealModel>(meal);
         }
 
-        public async Task<IEnumerable<MealModel>> GetAllAsync(Expression<Func<Meal, bool>>? filter = null)
+        public async Task<IEnumerable<MealModel>> GetAllAsync(Expression<Func<Meal, bool>> filter)
         {
-            return await _context.Meals.Where(m => !m.IsDeleted) 
-                                 .Where(filter ?? (om => true))
-                                 .Select(m => _mapper.Map<MealModel>(m))
-                                 .ToListAsync();
+            var result = await _getRepository.GetAllAsync(filter);
+
+            var mapping = _mapper.Map<List<MealModel>>(result);
+
+            return mapping;
+        }
+
+        public async Task<IEnumerable<MealModel>> GetAllAsync()
+        {
+            var result = await _getRepository.GetAllAsync();
+
+            var mapping = _mapper.Map<IEnumerable<MealModel>>(result);
+
+            return mapping;
         }
     }
 }

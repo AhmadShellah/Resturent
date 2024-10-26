@@ -1,72 +1,76 @@
 ﻿using AutoMapper;
 using BusinessObjects.Models;
 using DataAccess.Entities;
+using DataAccess.Repositories.Generic;
+using DataAccess.Repositories.Specific;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace DataAccess.Repositories.Implementation
 {
-    public class OrderRepository(ApplicationDbContext context, IMapper mapper) : IOrderRepository
+    public class OrderRepository(ApplicationDbContext context, 
+        IMapper mapper, 
+        IGetRepository<Order> getRepository,
+        ICreateRepository<Order> createRepository,
+        IRemoveRepository<Order> removeRepository) : IOrderRepository
     {
-        private readonly ApplicationDbContext _context = context ?? 
-            throw new ArgumentNullException(nameof(context));
+        private readonly ApplicationDbContext _context = context;
 
-        private readonly IMapper _mapper = mapper ?? 
-            throw new ArgumentNullException(nameof(mapper));
+        private readonly IMapper _mapper = mapper;
+
+        private readonly IGetRepository<Order> _getRepository = getRepository;
+
+        private readonly ICreateRepository<Order> _createRepository = createRepository;
+
+        private readonly IRemoveRepository<Order> _removeRepository = removeRepository;
 
         public async Task<OrderModel> CreateAsync(OrderModel model, bool? saving = false)
         {
             var entity = _mapper.Map<Order>(model);
 
-            await _context.Orders.AddAsync(entity);
+            await _createRepository.CreateAsync(entity, saving);
 
-            if (saving == true)
-            {
-                await _context.SaveChangesAsync();
-            }
-
-            return _mapper.Map<OrderModel>(entity, opts =>
-            {
-                opts.Items["PartialMapping"] = true; 
-            });
+            return _mapper.Map<OrderModel>(entity);
         }
 
         public async Task<OrderModel> GetByIdAsync(Guid id)
         {
-            var order = await _context.Orders.Include(o => o.OrderMeals)
-                                                .ThenInclude(o => o.Details)
-                                             .FirstOrDefaultAsync(m => m.Id == id && !m.IsDeleted) ??
+            var query = _getRepository.GetIQueryableAsync();
+
+            var result = (await IncludeSubEntities(query)).FirstOrDefault(m => m.Id == id) ??
                         throw new KeyNotFoundException($"Order with id: {id} not found !!");
 
-            order.OrderMeals = order.OrderMeals.Where(om => !om.IsDeleted && !om.Details.IsDeleted).ToList();
-
-            return _mapper.Map<OrderModel>(order);
+            return _mapper.Map<OrderModel>(result);
         }
 
         public async Task<IEnumerable<OrderModel>> GetAllAsync()
         {
-            var orders =  await _context.Orders.Where(o => !o.IsDeleted) 
-                                 .Include(o => o.OrderMeals) 
-                                     .ThenInclude(om => om.Details) 
-                                 .ToListAsync();
+            var query = _getRepository.GetIQueryableAsync();
 
-            orders.ForEach(o =>
-                o.OrderMeals = o.OrderMeals.Where(om => !om.IsDeleted && !om.Details.IsDeleted).ToList()
-            );
+            IEnumerable<Order> result = await IncludeSubEntities(query);
 
-            return _mapper.Map<IEnumerable<OrderModel>>(orders);
+            return _mapper.Map<IEnumerable<OrderModel>>(result);
+        }
+
+        public async Task<IEnumerable<OrderModel>> GetAllAsync(Expression<Func<Order, bool>> filter)
+        {
+            var query = _getRepository.GetIQueryableAsync(filter);
+
+            IEnumerable<Order> result = await IncludeSubEntities(query);
+
+            return _mapper.Map<IEnumerable<OrderModel>>(result);
+        }
+
+        private static async Task<IEnumerable<Order>> IncludeSubEntities(IQueryable<Order> query)
+        {
+            return await query.Include(o => o.OrderMeals.Where(om => om.IsDeleted != true))
+                .ThenInclude(o => o.Details)
+                .ToListAsync();
         }
 
         public async Task RemoveAsync(Guid id, bool? saving = false)
         {
-            var order = await _context.Orders.FirstOrDefaultAsync(o => o.Id == id && !o.IsDeleted) ??
-                        throw new KeyNotFoundException($"Order with id: {id} not found !!");
-
-            order.SetIsDeleted();
-
-            if (saving == true)
-            {
-                await _context.SaveChangesAsync();
-            }
+            await _removeRepository.RemoveAsync(id, saving);
         }
 
         public async Task EditAsync(OrderModel editOrder, bool? saving = false)

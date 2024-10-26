@@ -1,31 +1,36 @@
 ﻿using AutoMapper;
 using BusinessObjects.Models;
 using DataAccess.Entities;
+using DataAccess.Repositories.Generic;
+using DataAccess.Repositories.Specific;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
 namespace DataAccess.Repositories.Implementation
 {
-    public class OrderMealRepository(ApplicationDbContext context, IMapper mapper) : IOrderMealRepository
+    public class OrderMealRepository(ApplicationDbContext context, 
+        IMapper mapper, 
+        IGetRepository<OrderMeal> getRepository,
+        ICreateRepository<OrderMeal> createRepository,
+        IRemoveRepository<OrderMeal> removeRepository) : IOrderMealRepository
     {
-        private readonly ApplicationDbContext _context = context ??
-            throw new ArgumentNullException(nameof(context));
+        private readonly ApplicationDbContext _context = context;
 
-        private readonly IMapper _mapper = mapper ??
-            throw new ArgumentNullException(nameof(mapper));
+        private readonly IMapper _mapper = mapper;
 
-        public async Task<OrderMealModel> CreateAsync(OrderMealModel model, Guid orderId, bool saving)
+        private readonly IGetRepository<OrderMeal> _getRepository = getRepository;
+
+        private readonly ICreateRepository<OrderMeal> _createRepository = createRepository;
+
+        private readonly IRemoveRepository<OrderMeal> _removeRepository = removeRepository;
+
+        public async Task<OrderMealModel> CreateAsync(OrderMealModel model, Guid orderId, bool? saving = false)
         {
             var entity = _mapper.Map<OrderMeal>(model);
 
             entity.OrderId = orderId;
 
-            await _context.OrderMeals.AddAsync(entity);
-
-            if (saving)
-            {
-                await _context.SaveChangesAsync();
-            }
+            await _createRepository.CreateAsync(entity, saving);
 
             return _mapper.Map<OrderMealModel>(entity);
         }
@@ -38,28 +43,23 @@ namespace DataAccess.Repositories.Implementation
             return _mapper.Map<OrderMealModel>(orderMeal);
         }
 
-        public async Task<IEnumerable<OrderMealModel>> GetAllAsync(Expression<Func<OrderMeal, bool>>? filter = null)
+        public async Task<IEnumerable<OrderMealModel>> GetAllAsync(Expression<Func<OrderMeal, bool>> filter)
         {
-            return await _context.OrderMeals.Where(om => !om.IsDeleted)
-                .Where(filter ?? (om => true))
-                .Select(om => _mapper.Map<OrderMealModel>(om))
-                .ToListAsync();
+            var result = await _getRepository.GetAllAsync(filter);
+
+            return _mapper.Map<IEnumerable<OrderMealModel>>(result);    
         }
 
-        public async Task RemoveAsync(Expression<Func<OrderMeal, bool>>? type = null, bool? saving = false)
+        public async Task<IEnumerable<OrderMealModel>> GetAllAsync()
         {
+            var result = await _getRepository.GetAllAsync();
 
-            var entities = await _context.OrderMeals.Where(om => !om.IsDeleted)
-                .Where(type ?? (om => true))
-                .ToListAsync();
+            return _mapper.Map<IEnumerable<OrderMealModel>>(result);
+        }
 
-            entities.ForEach(om => om.SetIsDeleted());
-
-
-            if (saving == true)
-            {
-                await _context.SaveChangesAsync();
-            }
+        public async Task RemoveAsync(Expression<Func<OrderMeal, bool>> type, bool? saving = false)
+        {
+            await _removeRepository.RemoveRangeAsync(type, saving);
         }
     }
 }

@@ -8,7 +8,7 @@
         public OrderMealDetailsModel Details { get; set; }
         public decimal TotalPrice 
         { 
-            get => Details.Quantity * Details.UnitPrice;  
+            get => Details?.Quantity * Details?.UnitPrice ?? 0;  
         }
     }
 }

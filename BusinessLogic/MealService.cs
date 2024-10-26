@@ -1,6 +1,6 @@
 ﻿using BusinessObjects.Models;
 using BusinessObjects.Interfaces;
-using DataAccess.Repositories;
+using DataAccess.Repositories.Specific;
 
 namespace BusinessLogic
 {
@@ -11,7 +11,7 @@ namespace BusinessLogic
 
         public async Task<MealModel> CreateAsync(MealModel model)// model => (Repo) => model => Controller
         {
-            return await _repository.CreateAsync(model);
+            return await _repository.CreateAsync(model, true);
         }
 
         public async Task<MealModel> EditAsync(MealModel model)
@@ -31,7 +31,7 @@ namespace BusinessLogic
 
         public async Task RemoveAsync(Guid id)
         {
-            await _repository.RemoveAsync(id);
+            await _repository.RemoveAsync(id, true);
         }
     }
 }
