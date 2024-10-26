@@ -25,6 +25,7 @@ builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IOrderRepositoryService, OrderRepository>();
 
 builder.Services.AddScoped(typeof(IBasicRepo<>), typeof(BasicRepo<>));
+builder.Services.AddScoped(typeof(ICreateRepo<>), typeof(CreateRepo<>));
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
