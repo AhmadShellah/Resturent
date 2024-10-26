@@ -10,22 +10,24 @@ namespace DataCenter.OrderManagement
     {
         private readonly IMapper _mapper;
         private readonly IBasicRepo<Order> _basicRepo;
+        private readonly ICreateRepo<Order> _createRepo;
         private readonly ApplicationDbContext _context;
 
-        public OrderRepository(ApplicationDbContext context, IMapper mapper, IBasicRepo<Order> basicRepo)
+        public OrderRepository(ApplicationDbContext context, IMapper mapper, IBasicRepo<Order> basicRepo , ICreateRepo<Order> createRepo)
         {
             _context = context;
             _mapper = mapper;
             _basicRepo = basicRepo;
+            _createRepo = createRepo;
         }
 
-        public OrderModel CreateOrder(OrderModel orderModel)
+        public async Task<OrderModel> CreateOrder(OrderModel orderModel)
         {
             var order = _mapper.Map<OrderModel, Order>(orderModel);
-            _context.Orders.Add(order);
-            _context.SaveChanges();
+            var result =await _createRepo.Create(order);
 
-            return _mapper.Map<Order, OrderModel>(order);
+
+            return _mapper.Map<Order, OrderModel>(result);
         }
 
         public async Task<IEnumerable<OrderModel>> GetOrders(Guid? id = null)

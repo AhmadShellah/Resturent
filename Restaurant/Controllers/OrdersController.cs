@@ -23,13 +23,14 @@ namespace Restaurant.Controllers
 
         // Create a new order
         [HttpPost]
-        public ActionResult CreateOrder(CreateOrderDto inputFromUser)
+        public async Task<ActionResult> CreateOrder(CreateOrderDto inputFromUser)
         {
 
             // Map the CreateOrderDto to OrderModel
             var orderModel = _mapper.Map<OrderModel>(inputFromUser);
-            var order = _orderService.CreateOrder(orderModel);
-            return Ok(order);
+            var order = await _orderService.CreateOrder(orderModel);
+            var result = _mapper.Map<OrderDto>(order);
+            return Ok(result);
         }
 
         // Get all orders or a specific order by ID

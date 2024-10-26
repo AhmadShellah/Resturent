@@ -22,7 +22,7 @@ namespace Services
             _mealService = mealService;
         }
 
-        public OrderModel CreateOrder(OrderModel orderModel)
+        public async Task<OrderModel> CreateOrder(OrderModel orderModel)
         {
 
             var meals = _mealService.GetMealService();
@@ -34,12 +34,10 @@ namespace Services
                 meal.OrderMealDetails.UnitPrice = mealDetails.Price; 
             }
 
-            var createdOrder = _orderRepository.CreateOrder(orderModel);
+            var createdOrder = await _orderRepository.CreateOrder(orderModel);
 
             
-            var createdOrderModel = createdOrder;
-
-            return createdOrderModel;
+            return createdOrder;
         }
         public async Task<IEnumerable<OrderModel>> GetOrders(Guid? id = null)
         {
