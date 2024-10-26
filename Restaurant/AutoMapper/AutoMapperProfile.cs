@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Contracts.AllModels;
 using Contracts.AllModels.MealsModels;
 using Restaurant.ViewModelsOrDtos;
 
@@ -12,7 +11,7 @@ namespace Restaurant.AutoMapper
             CreateMap<CreateMealsDto, MealModel>().ReverseMap();
             CreateMap<MealModel, MealsViewModelOrDto>().ReverseMap();
 
-          
+
         }
     }
 }

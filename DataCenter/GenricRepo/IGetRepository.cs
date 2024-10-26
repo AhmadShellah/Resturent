@@ -3,7 +3,7 @@ using System.Linq.Expressions;
 
 namespace DataCenter.GenricRepo
 {
-    public interface IBasicRepo<TEntity> where TEntity : BaseEntity
+    public interface IGetRepository<TEntity> where TEntity : BaseEntity
     {
         public Task<List<TEntity>> GetListAsync();
 
@@ -12,5 +12,8 @@ namespace DataCenter.GenricRepo
         public Task<List<TEntity>> GetListAsync(Expression<Func<TEntity, bool>> filter);
 
         public Task<IQueryable<TEntity>> GetIQueryableAsync(Expression<Func<TEntity, bool>> filter = null);
+
+        public IQueryable<TEntity> GetIQueryable(Expression<Func<TEntity, bool>>? filter = null,
+          params Func<IQueryable<TEntity>, IQueryable<TEntity>>[] includes);
     }
 }

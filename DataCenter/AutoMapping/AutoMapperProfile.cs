@@ -12,8 +12,8 @@ namespace DataCenter.AutoMapper
 
             CreateMap<MealModel, Meal>()
                 .ForMember(s => s.Id, c => c.Ignore())
-                .ForMember(dest => dest.IsDeleted, 
-                src => src.MapFrom(src=> src.Deleted));
+                .ForMember(dest => dest.IsDeleted,
+                src => src.MapFrom(src => src.Deleted));
         }
     }
 }

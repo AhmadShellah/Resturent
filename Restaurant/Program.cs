@@ -24,7 +24,15 @@ builder.Services.AddScoped<IMealService, MealService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IMealRepositoryService, MealRepository>();
 
-builder.Services.AddScoped(typeof(IBasicRepo<>),typeof(BasicRepo<>));
+
+
+builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+builder.Services.AddScoped(typeof(IGetRepository<>), typeof(GetRepository<>));
+builder.Services.AddScoped(typeof(ISaveChanges<>), typeof(SaveChangeRepository<>));
+builder.Services.AddScoped(typeof(ICreateRepository<>), typeof(CreateRepository<>));
+builder.Services.AddScoped(typeof(IUpdateRepository<>), typeof(UpdateRepository<>));
+
+
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

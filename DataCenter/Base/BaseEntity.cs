@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DataCenter.Base
 {
@@ -12,6 +13,9 @@ namespace DataCenter.Base
         public DateTime CreationDate { get; set; } = DateTime.Now;
 
         public DateTime? DeleteTime { get; set; }
+
+        [NotMapped]
+        public bool SaveChange { get; set; } = false;
 
         public void SetIsDeleted()
         {

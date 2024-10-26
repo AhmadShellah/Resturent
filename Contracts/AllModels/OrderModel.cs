@@ -7,5 +7,8 @@
         public int Number { get; set; }
 
         public DateTime DueDate { get; set; }
+
+        public bool SaveChanges { get; set; } = false;
+
     }
 }
