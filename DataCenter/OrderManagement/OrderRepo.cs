@@ -8,10 +8,10 @@ namespace DataCenter.OrderManagement
     public class OrderRepo : IOrderRepo
     {
         private readonly IMapper _mapper;
-        private readonly IBasicRepo<Order> _basicRepo;
+        private readonly IGetRepository<Order> _basicRepo;
         private readonly ApplicationDbContext _context;
 
-        public OrderRepo(ApplicationDbContext context, IMapper mapper, IBasicRepo<Order> basicRepo)
+        public OrderRepo(ApplicationDbContext context, IMapper mapper, IGetRepository<Order> basicRepo)
         {
             _context = context;
             _mapper = mapper;
@@ -31,7 +31,7 @@ namespace DataCenter.OrderManagement
         {
             var result = await _basicRepo.GetIQueryableAsync();
 
-            var finalResult = await result.FirstOrDefaultAsync(s=> s.Id == id);
+            var finalResult = await result.FirstOrDefaultAsync(s => s.Id == id);
 
             var mapping = _mapper.Map<OrderModel>(finalResult);
 
@@ -47,6 +47,8 @@ namespace DataCenter.OrderManagement
 
             return mapping;
         }
+
+
 
         public async Task<OrderModel> CreateFromUser(OrderModel inputFromUser)
         {

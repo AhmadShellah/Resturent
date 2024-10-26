@@ -1,7 +1,6 @@
 ﻿using DataCenter.Base;
 using DataCenter.MealManagement;
 using DataCenter.OrderManagement;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DataCenter.OrderMealsManagement
 {

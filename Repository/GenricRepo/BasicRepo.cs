@@ -1,14 +1,16 @@
-﻿using DataCenter.Base;
+﻿
+using DataCenter;
+using DataCenter.Base;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
-namespace DataCenter.GenricRepo
+namespace Repositorys
 {
-    public class BasicRepo<TEntity> : IBasicRepo<TEntity> where TEntity : BaseEntity
+    public class BasicRepository<TEntity> : IBasicRepository<TEntity> where TEntity : BaseEntity
     {
         protected readonly ApplicationDbContext _context;
 
-        public BasicRepo(ApplicationDbContext context)
+        public BasicRepository(ApplicationDbContext context)
         {
             _context = context;
         }
@@ -47,6 +49,28 @@ namespace DataCenter.GenricRepo
                 .Where(filter)
                 .Where(s => s.IsDeleted != true)
                 .ToListAsync();
+
+            return result;
+        }
+
+        public IQueryable<TEntity> GetIQueryable(
+                    Expression<Func<TEntity, bool>>? filter = null,
+                    params Func<IQueryable<TEntity>, IQueryable<TEntity>>[] includes)
+        {
+            // Apply the base filter
+            var result = _context.Set<TEntity>().Where(e => !e.IsDeleted);
+
+            // Apply the filter if provided
+            if (filter != null)
+            {
+                result = result.Where(filter);
+            }
+
+            // Apply each include function
+            foreach (var include in includes)
+            {
+                result = include(result);
+            }
 
             return result;
         }

@@ -10,9 +10,9 @@ namespace DataCenter.MealManagement
         private readonly static List<Meal> _Meal = new();
         private readonly IMapper _mapper;
         private readonly ApplicationDbContext _context;
-        private readonly IBasicRepo<Meal> _basicRepo;
+        private readonly IGetRepository<Meal> _basicRepo;
 
-        public MealRepository(IMapper mapper, ApplicationDbContext context, IBasicRepo<Meal> basicRepo)
+        public MealRepository(IMapper mapper, ApplicationDbContext context, IGetRepository<Meal> basicRepo)
         {
             _mapper = mapper;
             _context = context;
@@ -21,7 +21,7 @@ namespace DataCenter.MealManagement
 
         public async Task<List<MealModel>> GetMealsList()
         {
-            var result = await _basicRepo.GetListAsync(s=> s.Description == "Ahmad");
+            var result = await _basicRepo.GetListAsync(s => s.Description == "Ahmad");
 
             var mapping = _mapper.Map<List<MealModel>>(result);
 
@@ -40,6 +40,8 @@ namespace DataCenter.MealManagement
 
             return mappingToReturn;
         }
+
+
 
         public MealModel Create(MealModel inputFromDeveloper)
         {

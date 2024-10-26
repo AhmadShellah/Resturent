@@ -6,7 +6,7 @@ namespace Restaurant.ViewModelsOrDtos
     {
         public string Name { get; set; }
 
-        [Range(1,1000)]
+        [Range(1, 1000)]
         public decimal Price { get; set; }
     }
 }
