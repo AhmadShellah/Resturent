@@ -7,21 +7,18 @@ namespace DataCenter.MealManagement
 {
     public class MealRepository : IMealRepositoryService
     {
-        private readonly static List<Meal> _Meal = new();
         private readonly IMapper _mapper;
-        private readonly ApplicationDbContext _context;
-        private readonly IGetRepository<Meal> _basicRepo;
+        private readonly IRepository<Meal> _repository;
 
-        public MealRepository(IMapper mapper, ApplicationDbContext context, IGetRepository<Meal> basicRepo)
+        public MealRepository(IMapper mapper, IRepository<Meal> repository)
         {
             _mapper = mapper;
-            _context = context;
-            _basicRepo = basicRepo;
+            _repository = repository;
         }
 
         public async Task<List<MealModel>> GetMealsList()
         {
-            var result = await _basicRepo.GetListAsync(s => s.Description == "Ahmad");
+            var result = await _repository.GetListAsync(s => s.Description == "Ahmad");
 
             var mapping = _mapper.Map<List<MealModel>>(result);
 
@@ -32,9 +29,7 @@ namespace DataCenter.MealManagement
         {
             var mappingToInsert = _mapper.Map<MealModel, Meal>(inputFromDeveloper);
 
-            _context.Meals.Add(mappingToInsert);
-
-            _context.SaveChanges();
+            _repository.Create(mappingToInsert, true);
 
             var mappingToReturn = _mapper.Map<Meal, MealModel>(mappingToInsert);
 
@@ -47,7 +42,7 @@ namespace DataCenter.MealManagement
         {
             var mappingToInsert = _mapper.Map<MealModel, Meal>(inputFromDeveloper);
 
-            _Meal.Add(mappingToInsert);
+            _repository.Create(mappingToInsert, true);
 
             var mappingToReturn = _mapper.Map<Meal, MealModel>(mappingToInsert);
 
