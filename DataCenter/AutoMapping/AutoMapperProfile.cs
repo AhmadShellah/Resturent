@@ -42,6 +42,6 @@ namespace DataCenter.AutoMapper
 
         }
     }
-    }
-    
+}
+
 

@@ -9,47 +9,42 @@ namespace DataCenter.OrderManagement
     public class OrderRepository : IOrderRepositoryService
     {
         private readonly IMapper _mapper;
-        private readonly IBasicRepo<Order> _basicRepo;
-        private readonly ICreateRepo<Order> _createRepo;
-        private readonly ApplicationDbContext _context;
+        private readonly IRepository<Order> _Repository;
 
-        public OrderRepository(ApplicationDbContext context, IMapper mapper, IBasicRepo<Order> basicRepo , ICreateRepo<Order> createRepo)
+        public OrderRepository(IMapper mapper, IRepository<Order> repository)
         {
-            _context = context;
             _mapper = mapper;
-            _basicRepo = basicRepo;
-            _createRepo = createRepo;
+            _Repository = repository;
         }
 
         public async Task<OrderModel> CreateOrder(OrderModel orderModel)
         {
             var order = _mapper.Map<OrderModel, Order>(orderModel);
-            var result =await _createRepo.Create(order);
-
-
+            var result = await _Repository.CreateAsync(order, true);
             return _mapper.Map<Order, OrderModel>(result);
         }
 
-        public async Task<IEnumerable<OrderModel>> GetOrders(Guid? id = null)
+        public async Task<IEnumerable<OrderModel>> GetOrders()
         {
-            if (id.HasValue)
-            {
-                var orders = await _basicRepo.GetIQueryableAsync();
-                orders = orders.Include(o => o.Meals).ThenInclude(om => om.OrderMealDetails);
+            var orders = _Repository.GetIQueryable(filter: null,
+                        includes: s =>
+                        s.Include(c => c.Meals).ThenInclude(om => om.OrderMealDetails))
+                        .AsEnumerable();
 
-                var order = orders.FirstOrDefault(o => o.Id == id.Value);
+            return _mapper.Map<IEnumerable<OrderModel>>(orders);
+        }
 
-                return order != null
-                    ? new List<OrderModel> { _mapper.Map<Order, OrderModel>(order) }
-                    : new List<OrderModel>();
-            }
-            else
-            {
-                var orders = await _basicRepo.GetIQueryableAsync();
-                orders = orders.Include(o => o.Meals).ThenInclude(om => om.OrderMealDetails);
+        public async Task<OrderModel> GetOrderById(Guid id)
+        {
+            var order = _Repository.GetIQueryable(filter: null,
+                        includes: s =>
+                        s.Include(c => c.Meals).ThenInclude(om => om.OrderMealDetails))
+                        .FirstOrDefault(o => o.Id == id);
 
-                return _mapper.Map<IEnumerable<OrderModel>>(orders.ToList());
-            }
+            var mapping = _mapper.Map<OrderModel>(order);
+
+            return mapping;
+
         }
 
         //public OrderModel EditOrder(OrderModel updatedOrderModel)
@@ -65,16 +60,9 @@ namespace DataCenter.OrderManagement
         //    return null;
         //}
 
-        //public bool DeleteOrder(Guid id)
-        //{
-        //    var order = _context.Orders.Find(id);
-        //    if (order != null)
-        //    {
-        //        _context.Orders.Remove(order);
-        //        _context.SaveChanges();
-        //        return true;
-        //    }
-        //    return false;
-        //}
+        public async Task<bool> DeleteOrder(Guid id)
+        {
+            return await _Repository.RemoveAsync(id, true);
+        }
     }
 }

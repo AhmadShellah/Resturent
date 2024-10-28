@@ -1,20 +1,21 @@
 ﻿using Contracts.AllModels.MealsModels;
-using System.Collections.Generic;
 
 namespace DataCenter.MealsManagement
 {
     public interface IMealRepositoryService
     {
         // Create a new meal
-        MealModel CreateObjectInDataBase(MealModel inputFromDeveloper);
+        public Task<MealModel> Create(MealModel inputFromDeveloper);
 
         // Get meals (all or by ID)
-        IEnumerable<MealModel> GetMeals(Guid? id = null);
+        public Task<IEnumerable<MealModel>> GetMeals();
+
+        public Task<MealModel> GetById(Guid id);
 
         // Edit an existing meal
-        MealModel EditMeal(MealModel updatedMealModel);
+        public Task<MealModel> EditMeal(MealModel updatedMealModel);
 
         // Delete a meal by ID
-        bool DeleteMeal(Guid id);
+        public Task<bool> DeleteMeal(Guid id);
     }
 }

@@ -5,8 +5,12 @@ namespace Contracts.InterFacses
     public interface IOrderRepositoryService
     {
         public Task<OrderModel> CreateOrder(OrderModel orderModel);
-        public Task<IEnumerable<OrderModel>> GetOrders(Guid? id = null);
+        public Task<IEnumerable<OrderModel>> GetOrders();
+
+        public Task<OrderModel> GetOrderById(Guid id);
+
         //OrderModel EditOrder(OrderModel updatedOrderModel);
-        //bool DeleteOrder(Guid id);
+        public Task<bool> DeleteOrder(Guid id);
+
     }
 }
