@@ -2,10 +2,6 @@
 using Contracts.AllModels.OredrsModels;
 using Contracts.InterFacses;
 using DataCenter.MealManagement;
-using DataCenter.OrderManagement;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace Services
 {
@@ -15,7 +11,7 @@ namespace Services
         private readonly IMapper _mapper;
         private readonly IMealService _mealService;
 
-        public OrderService(IOrderRepositoryService orderRepository, IMapper mapper , IMealService mealService)
+        public OrderService(IOrderRepositoryService orderRepository, IMapper mapper, IMealService mealService)
         {
             _orderRepository = orderRepository;
             _mapper = mapper;
@@ -25,23 +21,23 @@ namespace Services
         public async Task<OrderModel> CreateOrder(OrderModel orderModel)
         {
 
-            var meals = _mealService.GetMealService();
+            var meals = await _mealService.GetMeals();
 
             foreach (var meal in orderModel.Meals)
             {
-                var mealDetails = meals.FirstOrDefault(s=> s.Id == meal.MealId);
+                var mealDetails = meals.FirstOrDefault(s => s.Id == meal.MealId);
 
-                meal.OrderMealDetails.UnitPrice = mealDetails.Price; 
+                meal.OrderMealDetails.UnitPrice = mealDetails.Price;
             }
 
             var createdOrder = await _orderRepository.CreateOrder(orderModel);
 
-            
+
             return createdOrder;
         }
-        public async Task<IEnumerable<OrderModel>> GetOrders(Guid? id = null)
+        public async Task<IEnumerable<OrderModel>> GetOrders()
         {
-            return  await _orderRepository.GetOrders(id);
+            return await _orderRepository.GetOrders();
         }
 
         //public OrderModel EditOrder(OrderModel updatedOrderModel)
@@ -50,9 +46,16 @@ namespace Services
         //    return _orderRepository.EditOrder(updatedOrderModel);
         //}
 
-        //public bool DeleteOrder(Guid id)
-        //{
-        //    return _orderRepository.DeleteOrder(id);
-        //}
+        public async Task<bool> DeleteOrder(Guid id)
+        {
+            var result = await _orderRepository.DeleteOrder(id);
+
+            if (!result)
+            {
+                throw new Exception("Order not found or could not be deleted");
+            }
+
+            return result;
+        }
     }
 }

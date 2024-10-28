@@ -3,8 +3,6 @@ using Contracts.AllModels.MealsModels;
 using Contracts.InterFacses;
 using Microsoft.AspNetCore.Mvc;
 using Restaurant.ViewModelsOrDtos;
-using Services;
-using System.Collections.Generic;
 
 namespace Restaurant.Controllers
 {
@@ -23,10 +21,10 @@ namespace Restaurant.Controllers
 
         // Create meal for end user
         [HttpPost]
-        public ActionResult CreateFromEndUser(CreateMealsDto inputFromEndUser)
+        public async Task<ActionResult> CreateFromEndUser(CreateMealsDto inputFromEndUser)
         {
             var mapping = _mapper.Map<CreateMealsDto, MealModel>(inputFromEndUser);
-            var resultFromService = _mealService.CreateMealService(mapping);
+            var resultFromService = await _mealService.CreateMealService(mapping);
             var mappingToReturnUser = _mapper.Map<MealModel, MealsViewModelOrDto>(resultFromService);
             return Ok(mappingToReturnUser);
         }
@@ -34,34 +32,48 @@ namespace Restaurant.Controllers
 
         // Get all meals or a specific meal by ID
         [HttpGet]
-        public ActionResult<IEnumerable<MealsViewModelOrDto>> GetMeals(Guid? id = null)
+        public async Task<ActionResult> GetMeals()
         {
-            var resultFromService = _mealService.GetMealService(id);
-            var mappingToReturn = _mapper.Map<IEnumerable<MealModel>>(resultFromService);
+            var resultFromService = await _mealService.GetMeals();
+            var mappingToReturn = _mapper.Map<List<MealModel>, List<MealsViewModelOrDto>>(resultFromService.ToList());
+            return Ok(mappingToReturn);
+        }
+
+        [HttpGet]
+        public async Task<ActionResult> GetMealById(Guid id)
+        {
+            var resultFromService = await _mealService.GetMealById(id);
+            if (resultFromService == null)
+            {
+                return NoContent();
+            }
+            var mappingToReturn = _mapper.Map<MealModel,MealsViewModelOrDto>(resultFromService);
             return Ok(mappingToReturn);
         }
 
         // Edit a meal
         [HttpPut]
-        public ActionResult EditMeal(EditMealDto inputFromUser)
+        public async Task<ActionResult> EditMeal(EditMealDto inputFromUser)
         {
             var mapping = _mapper.Map<EditMealDto, MealModel>(inputFromUser);
-            var resultFromService = _mealService.EditMealService(mapping);
-
-            if (resultFromService == null)
+            try
             {
-                return NotFound("Meal not found");
-            }
 
-            var mappingToReturnUser = _mapper.Map<MealModel, MealsViewModelOrDto>(resultFromService);
-            return Ok(mappingToReturnUser);
+                var resultFromService = await _mealService.EditMealService(mapping);
+                var mappingToReturnUser = _mapper.Map<MealModel, MealsViewModelOrDto>(resultFromService);
+                return Ok(mappingToReturnUser);
+            }
+            catch (Exception ex)
+            {
+                return NotFound(ex.Message);
+            }
         }
 
-        // Delete a meal by ID
-        [HttpDelete("{id}")]
-        public ActionResult DeleteMeal(Guid id)
+        //Delete a meal by ID
+       [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteMeal(Guid id)
         {
-            var resultFromService = _mealService.DeleteMealService(id);
+            var resultFromService = await _mealService.DeleteMealService(id);
 
             if (!resultFromService)
             {

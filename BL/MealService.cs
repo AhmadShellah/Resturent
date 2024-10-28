@@ -1,60 +1,60 @@
 ﻿using AutoMapper;
 using Contracts.AllModels.MealsModels;
 using Contracts.InterFacses;
-using DataCenter.MealManagement;
 using DataCenter.MealsManagement;
-using System.Collections.Generic;
 
 namespace Services
 {
     public class MealService : IMealService
     {
-        private readonly IMapper _mapper;
         private readonly IMealRepositoryService _mealsRepository;
 
-        public MealService(IMapper mapper, IMealRepositoryService mealsRepository)
+        public MealService( IMealRepositoryService mealsRepository)
         {
-            _mapper = mapper;
             _mealsRepository = mealsRepository;
         }
 
         // Create a new meal
-        public MealModel CreateMealService(MealModel inputFromController)
+        public async Task<MealModel> CreateMealService(MealModel inputFromController)
         {
             ValidationFromInput(inputFromController);
 
             inputFromController.Description = "input From Service Or BL";
 
-            var resultFromDataBase = _mealsRepository.CreateObjectInDataBase(inputFromController);
+            var resultFromDataBase = await _mealsRepository.Create(inputFromController);
 
             return resultFromDataBase;
         }
 
         // Get meals (all or by ID)
-        public IEnumerable<MealModel> GetMealService(Guid? id = null)
+        public async Task<IEnumerable<MealModel>> GetMeals()
         {
-            return _mealsRepository.GetMeals(id);
+            var meals = await _mealsRepository.GetMeals();
+
+            return meals.ToList();
+        }
+
+        public async Task<MealModel> GetMealById(Guid id)
+        {
+            var meal = await _mealsRepository.GetById(id);
+
+            return meal;
         }
 
         // Edit an existing meal
-        public MealModel EditMealService(MealModel updatedMealModel)
+        public async Task<MealModel> EditMealService(MealModel updatedMealModel)
         {
             ValidationFromInput(updatedMealModel); // Reuse validation logic before editing the meal
 
-            var resultFromDataBase = _mealsRepository.EditMeal(updatedMealModel);
-
-            if (resultFromDataBase == null)
-            {
-                throw new Exception("Meal not found");
-            }
+            var resultFromDataBase = await _mealsRepository.EditMeal(updatedMealModel);
 
             return resultFromDataBase;
         }
 
         // Delete a meal by ID
-        public bool DeleteMealService(Guid id)
+        public async Task<bool> DeleteMealService(Guid id)
         {
-            var result = _mealsRepository.DeleteMeal(id);
+            var result = await _mealsRepository.DeleteMeal(id);
 
             if (!result)
             {

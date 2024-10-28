@@ -3,8 +3,6 @@ using Contracts.AllModels.OredrsModels;
 using Contracts.InterFacses;
 using Microsoft.AspNetCore.Mvc;
 using Restaurant.ViewModelsOrDtos.Order;
-using System;
-using System.Collections.Generic;
 
 namespace Restaurant.Controllers
 {
@@ -35,9 +33,9 @@ namespace Restaurant.Controllers
 
         // Get all orders or a specific order by ID
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<OrderDto>>> GetOrders(Guid? id = null)
+        public async Task<ActionResult<IEnumerable<OrderDto>>> GetOrders()
         {
-            var resultFromService = await _orderService.GetOrders(id);
+            var resultFromService = await _orderService.GetOrders();
             var mappingToReturn = _mapper.Map<IEnumerable<OrderDto>>(resultFromService);
             return Ok(mappingToReturn);
         }
@@ -62,31 +60,21 @@ namespace Restaurant.Controllers
         //    return Ok(mappingToReturnUser);
         //}
 
+
         //// Delete an order by ID
-        //[HttpDelete("{id}")]
-        //public ActionResult DeleteOrder(Guid id)
-        //{
-        //    var resultFromService = _orderService.DeleteOrder(id);
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteOrder(Guid id)
+        {
+            var resultFromService = await _orderService.DeleteOrder(id);
 
-        //    if (!resultFromService)
-        //    {
-        //        return NotFound("Order not found or could not be deleted.");
-        //    }
+            if (!resultFromService)
+            {
+                return NotFound("Order not found or could not be deleted.");
+            }
 
-        //    return NoContent(); // Return 204 No Content
-        //}
+            return Ok("Meal deleted successfully");
+        }
 
-        //// Get a specific order by ID (for the CreatedAtAction)
-        //[HttpGet("{id}")]
-        //public ActionResult<OrderModel> GetOrder(Guid id)
-        //{
-        //    var order = _orderService.GetOrders(id);
-        //    if (order == null)
-        //    {
-        //        return NotFound();
-        //    }
 
-        //    return Ok(order);
-        //}
     }
 }

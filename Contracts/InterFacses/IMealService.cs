@@ -1,20 +1,21 @@
 ﻿using Contracts.AllModels.MealsModels;
-using System.Collections.Generic;
 
 namespace Contracts.InterFacses
 {
     public interface IMealService
     {
         // Create a new meal
-        MealModel CreateMealService(MealModel inputFromController);
+        public Task<MealModel> CreateMealService(MealModel inputFromController);
 
         // Get meals (all or by ID)
-        IEnumerable<MealModel> GetMealService(Guid? id = null);
+        public Task<IEnumerable<MealModel>> GetMeals();
+
+        public Task<MealModel> GetMealById(Guid id);
 
         // Edit an existing meal
-        MealModel EditMealService(MealModel updatedMealModel);
+        public Task<MealModel> EditMealService(MealModel updatedMealModel);
 
         // Delete a meal by ID
-        bool DeleteMealService(Guid id);
+        Task<bool> DeleteMealService(Guid id);
     }
 }
